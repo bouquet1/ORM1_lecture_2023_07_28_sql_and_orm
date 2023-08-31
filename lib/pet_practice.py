@@ -25,7 +25,7 @@ class Pet:
         self.temperament = temperament
 
     
-    # ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist - 
+# ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist - 
     @classmethod
     def create_table (cls):
         sql = """
@@ -38,11 +38,28 @@ class Pet:
     """
         cursor.execute(sql)
 
-
 # ✅ 3. Add "drop_table" Class Method to Drop "pet_practice" Table If Exists
+    @classmethod
+    def drop_table(cls):
+        sql = """
+        DROP TABLE IF EXISTS pet_practice
+    """
+        cursor.execute(sql)
 
 
-# ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB
+# ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method
+    def save(self):
+        sql = """
+        INSERT INTO pet_practice (name, species, breed, temperament)
+        VALUES (?, ?, ?, ?)
+    """
+    #persist it using cursor.execute
+        cursor.execute(sql, (self.name, self.species, self.breed, self.temperament))
+    #commit it
+        connection.commit()
+
+
+# canvas daki save yontemini kullanilabilir. Check the notes below # 4.
    
 # ✅ 5. Add "create" Class Method to Initialize and Save New "pet_practice" Instances to DB
    
@@ -76,3 +93,24 @@ class Pet:
 fluffy = Pet("Fluffy", "dog", "Pomeranian", "calm")
 print(fluffy.name)
 print(fluffy.temperament)
+
+# 2. how to test that this init is done correctly? : under our cart add Pet.create_table() -execute our create_table classmethod- in terminal run python lib/pet_practice.py. and then refresh tge resources.db at the left and pet_practice table is created. (we run the table)
+# Pet.create_table()
+
+
+# 3. how to test that this init is done correctly? : Pet.drop_table() yazdik. sonra terminal de python lib/pet_practice.py yazip run the code. refresh database and the table is gone. 
+# Pet.drop_table() 
+
+# 4. canvas daki save yontemini kullanilabilir.
+#     def save(self,cursor):
+#         cursor.execute(
+#             'INSERT INTO pet_practice(name, species, breed, temperament) VALUES (?, ?, ?, ?)',
+#             (self.name, self.species, self.breed, self.temperament)
+#         )
+#         connection.commit()
+
+# 4. how to test that this init is done correctly? : add a data, dog buffy.
+
+buffy = Pet("Buffy", "dog", "mixed", "kissy")
+buffy.save()
+
