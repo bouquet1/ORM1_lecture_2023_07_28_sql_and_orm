@@ -27,6 +27,7 @@ class Pet:
 
 # ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist -
 
+
     @classmethod
     def create_table(cls):
         sql = """
@@ -50,7 +51,6 @@ class Pet:
 
 # ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method.
 
-
     def save(self):
         sql = """
         INSERT INTO pet_practice (name, species, breed, temperament)
@@ -67,19 +67,41 @@ class Pet:
 
 # ✅ 5. Add "create" Class Method to Initialize and Save New "pet_practice" Instances to DB
 
-
     @classmethod
     def create(cls, name, species, breed, temperament):
         pet = cls(name, species, breed, temperament)
         pet.save()
         return pet
 
-
-corny = Pet.create("Corny", "dog", "goldendoodle", "mama's boy")
+# her python lib/pet_practice.py run yaptigimda cornyi savannahi vebuffyi tekrar tekrar ekliyor ondan kapattim
+# corny = Pet.create("Corny", "dog", "goldendoodle", "mama's boy")
+# savannah = Pet.create('Savannah', 'dog', 'goldendoodle', 'traitor')
 
 # ✅ 6. Add "new_from_db" Class Method to Retrieve Newest "pet_practice" Instance w/ Attributes From DB
+    @classmethod
+    def new_from_db(cls, row):
+        cursor.execute(
+            "SELECT last_insert_rowid() FROM pet_practice").fetchone()[0]
+
+        pet = cls(row[0], row[1], row[2], row[3], row[4])
+        return pet
 
 # ✅ 7. Add "get_all" Class Method to Retrieve All "pet_practice" Instances From DB
+
+    @classmethod
+    def get_all(cls):
+        sql = """
+            SELECT * FROM pet_practice
+    """
+        all = cursor.execute(sql).fetchall()
+        print(all)
+        # testing: result when run this file: [(1, 'Buffy', 'dog', 'mixed', 'kissy'), (2, 'Corny', 'dog', 'goldendoodle', "mama's boy"), (3, 'Savannah', 'dog', 'goldendoodle', 'traitor')]
+        return [cls.new_from_db(row) for row in all]
+
+
+all = Pet.get_all()
+print(all)
+# testing: result when file run python lib/pet_practice.py: [<__main__.Pet object at 0x10aeb2c40>, <__main__.Pet object at 0x10aeb27f0>, <__main__.Pet object at 0x10aeb2730>]
 
 # ✅ 8. Add "find_by_name" Class Method to Retrieve "pet_practice" Instance by "name" Attribute From DB
 
@@ -95,9 +117,8 @@ corny = Pet.create("Corny", "dog", "goldendoodle", "mama's boy")
 
 # If No "pet" Found, Create New "pet" Instance w/ All Attributes
 
+
 # ✅ 11. Add "update" Class Method to Find "pet" Instance by "id" and Update All Attributes
-
-
 # 1. how to test that this init is done correctly? : by giving some data and checking the result. fluffy instance is created below. in terminal => python lib/pet_practice.py yazinca => print is executed: fliffy.name=> Fluffy i gormemiz lazim ya da fluffy.temperament => calm gibi
 # bukuleta@Bukets-MacBook-Pro ORM1_lecture_2023_07_28_sql_and_orm % python lib/pet_practice.py
 # Fluffy
@@ -107,7 +128,7 @@ fluffy = Pet("Fluffy", "dog", "Pomeranian", "calm")
 print(fluffy.name)
 print(fluffy.temperament)
 
-# 2. how to test that this init is done correctly? : under our cart add Pet.create_table() -execute our create_table classmethod- in terminal run python lib/pet_practice.py. and then refresh tge resources.db at the left and pet_practice table is created. (we run the table)
+# 2. how to test that this init is done correctly? : under our cart add Pet.create_table() -execute our create_table classmethod- in terminal run python lib/pet_practice.py and then refresh tge resources.db at the left and pet_practice table is created. (we run the table)
 # Pet.create_table()
 
 
@@ -124,5 +145,5 @@ print(fluffy.temperament)
 
 # 4. how to test that this init is done correctly? : add a data, dog buffy.
 
-buffy = Pet("Buffy", "dog", "mixed", "kissy")
-buffy.save()
+# buffy = Pet("Buffy", "dog", "mixed", "kissy")
+# buffy.save()
