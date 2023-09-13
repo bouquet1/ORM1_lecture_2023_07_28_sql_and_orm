@@ -16,18 +16,19 @@ cursor = connection.cursor()
 
 
 class Pet:
-# ✅ 1. Add "__init__" with "name", "species", "breed", "temperament", and "id" (Default: None) Attributes
-    def __init__(self, name, species, breed, temperament, id = None):
+    # ✅ 1. Add "__init__" with "name", "species", "breed", "temperament", and "id" (Default: None) Attributes
+    def __init__(self, name, species, breed, temperament, id=None):
         self.id = id
-        self.name = name 
+        self.name = name
         self.species = species
         self.breed = breed
         self.temperament = temperament
 
-    
-# ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist - 
+
+# ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist -
+
     @classmethod
-    def create_table (cls):
+    def create_table(cls):
         sql = """
         CREATE TABLE IF NOT EXISTS pet_practice
         (id INTEGER PRIMARY KEY,
@@ -47,22 +48,34 @@ class Pet:
         cursor.execute(sql)
 
 
-# ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method
+# ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method.
+
+
     def save(self):
         sql = """
         INSERT INTO pet_practice (name, species, breed, temperament)
         VALUES (?, ?, ?, ?)
     """
-    #persist it using cursor.execute
-        cursor.execute(sql, (self.name, self.species, self.breed, self.temperament))
-    #commit it
+    # persist it using cursor.execute
+        cursor.execute(sql, (self.name, self.species,
+                       self.breed, self.temperament))
+    # commit it
         connection.commit()
 
 
 # canvas daki save yontemini kullanilabilir. Check the notes below # 4.
-   
+
 # ✅ 5. Add "create" Class Method to Initialize and Save New "pet_practice" Instances to DB
-   
+
+
+    @classmethod
+    def create(cls, name, species, breed, temperament):
+        pet = cls(name, species, breed, temperament)
+        pet.save()
+        return pet
+
+
+corny = Pet.create("Corny", "dog", "goldendoodle", "mama's boy")
 
 # ✅ 6. Add "new_from_db" Class Method to Retrieve Newest "pet_practice" Instance w/ Attributes From DB
 
@@ -86,8 +99,8 @@ class Pet:
 
 
 # 1. how to test that this init is done correctly? : by giving some data and checking the result. fluffy instance is created below. in terminal => python lib/pet_practice.py yazinca => print is executed: fliffy.name=> Fluffy i gormemiz lazim ya da fluffy.temperament => calm gibi
-# bukuleta@Bukets-MacBook-Pro ORM1_lecture_2023_07_28_sql_and_orm % python lib/pet_practice.py 
-# Fluffy 
+# bukuleta@Bukets-MacBook-Pro ORM1_lecture_2023_07_28_sql_and_orm % python lib/pet_practice.py
+# Fluffy
 # calm
 
 fluffy = Pet("Fluffy", "dog", "Pomeranian", "calm")
@@ -98,8 +111,8 @@ print(fluffy.temperament)
 # Pet.create_table()
 
 
-# 3. how to test that this init is done correctly? : Pet.drop_table() yazdik. sonra terminal de python lib/pet_practice.py yazip run the code. refresh database and the table is gone. 
-# Pet.drop_table() 
+# 3. how to test that this init is done correctly? : Pet.drop_table() yazdik. sonra terminal de python lib/pet_practice.py yazip run the code. refresh database and the table is gone.
+# Pet.drop_table()
 
 # 4. canvas daki save yontemini kullanilabilir.
 #     def save(self,cursor):
@@ -113,4 +126,3 @@ print(fluffy.temperament)
 
 buffy = Pet("Buffy", "dog", "mixed", "kissy")
 buffy.save()
-
