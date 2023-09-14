@@ -36,6 +36,7 @@ class Pet:
 
 # ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist
 
+
     @classmethod
     def create_table(cls):
         sql = """
@@ -54,6 +55,7 @@ class Pet:
 
 # ✅ 3. Add "drop_table" Class Method to Drop "pet_practice" Table If Exists
 
+
     @classmethod
     def drop_table(cls):
         sql = """
@@ -66,7 +68,6 @@ class Pet:
 
 
 # ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method. (yeni 'evcil hayvan' örneklerini veritabanına devam ettir)
-
 
     def save(self):
         sql = """
@@ -84,12 +85,12 @@ class Pet:
 # buffy.save()
 
 # canvas daki save yontemi de kullanilabilir.
-    def save(self, cursor):
-        cursor.execute(
-            'INSERT INTO pet_practice(name, species, breed, temperament) VALUES (?, ?, ?, ?)',
-            (self.name, self.species, self.breed, self.temperament)
-        )
-        connection.commit()
+    # def save(self, cursor):
+    #     cursor.execute(
+    #         'INSERT INTO pet_practice(name, species, breed, temperament) VALUES (?, ?, ?, ?)',
+    #         (self.name, self.species, self.breed, self.temperament)
+    #     )
+    #     connection.commit()
 
 # to test
 #  buffy = Pet("Buffy", "dog", "mixed", "kissy")
@@ -97,22 +98,7 @@ class Pet:
 #  result is buffy is added the DB table
 
 
-# 4. canvas daki save yontemini kullanilabilir.
-    #  def save(self,cursor):
-    #      cursor.execute(
-    #          'INSERT INTO pet_practice(name, species, breed, temperament) VALUES (?, ?, ?, ?)',
-    #          (self.name, self.species, self.breed, self.temperament)
-    #      )
-    #      connection.commit()
-
-    # 4. how to test that this init is done correctly? : add a data, dog buffy.
-
-    # buffy = Pet("Buffy", "dog", "mixed", "kissy")
-    # buffy.save()
-
-
 # ✅ 5. Add "create" Class Method to Initialize and Save New "pet_practice" Instances to DB
-
 
     @classmethod
     def create(cls, name, species, breed, temperament):
@@ -131,7 +117,6 @@ class Pet:
 
 # ✅ 6. Add "new_from_db" Class Method to Retrieve Newest "pet_practice" Instance w/ Attributes From DB
 
-
     @classmethod
     def new_from_db(cls, row):
         cursor.execute(
@@ -142,6 +127,7 @@ class Pet:
 
 
 # ✅ 7. Add "get_all" Class Method to Retrieve All "pet_practice" Instances From DB
+
 
     @classmethod
     def get_all(cls):
@@ -162,6 +148,7 @@ class Pet:
 # ✅ 8. Add "find_by_name" Class Method to Retrieve "pet_practice" Instance by "name" Attribute From DB
 
 # If No "pet" Found, return "None"
+
 
     @classmethod
     def find_by_name(cls, name):
@@ -188,7 +175,6 @@ class Pet:
 
 # ✅ 9. Add "find_by_id" Class Method to Retrieve "pet_practice" Instance by "id" Attribute From DB
 # If No "pet_practice" Found, return "None"
-
 
     @classmethod
     def find_by_id(cls, id):
@@ -219,7 +205,6 @@ class Pet:
 #  Find and Retrieve "pet" Instance w/ All Attributes
 # If No "pet" Found, Create New "pet" Instance w/ All Attributes
 
-
     @classmethod
     def find_or_create_by(cls, name, species, breed, temperament):
         sql = """
@@ -229,11 +214,11 @@ class Pet:
     """
         pet = cursor.execute(
             sql, (name, species, breed, temperament)).fetchone()
-        # one way to write it -create() method is above and it has return statement in it that returns the pet
+        # one way to write it -create() method is above and it has return statement in it that returns the pet. row 5 came with this code and tersting below.
         # if not pet:
         #     cls.create(name, species, breed, temperament)
 
-        # we can also write like that to create new pet.
+        # we can also write like that to create new pet. testing this code created row 6.
         if not pet:
             new_pet = cls.create(name, species, breed, temperament)
             return new_pet
@@ -247,20 +232,20 @@ class Pet:
         )
 
 # testing:
-# pet = Pet.find_or_create_by("buffy", "dog", "mixed", "kissy")
+# pet = Pet.find_or_create_by("Buffy", "dog", "mixed", "kissy")
 # print(pet)
-# result in terminal: <__main__.Pet object at 0x101c5e7f0> and we also get pet id 5 in our table bc here buffy is spelled with 'b' nor 'B'
+# result in terminal: <__main__.Pet object at 0x101c5e7f0> it works
 
 # testing:
-# pet = Pet.find_or_create_by("buffy", NONE, "mixed", "kissy")
+# pet = Pet.find_or_create_by("Buffy", None, "mixed", "kissy")
 # print(pet)
-# result in terminal was an error about None but in the table we got the row 6 with species NULL.
+# result in terminal was an error about None "TypeError: 'NoneType' object is not subscriptable" but in the table we got the row 5 with species NULL.
 
 
 # testing:
 # pet = Pet.find_or_create_by("Dax", "dog", "dachsund", "jerk")
 # print(pet, pet.name)
-# result: <__main__.Pet object at 0x10c2a47f0> Dax we got instance and the name, plus pet 7 in our DB table
+# result: <__main__.Pet object at 0x10c2a47f0> Dax. We got instance and the name, plus row 6 in our DB table
 
 
 # ✅ 11. Add "update" Class Method to Find "pet" Instance by "id" and Update All Attributes
