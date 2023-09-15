@@ -36,7 +36,6 @@ class Pet:
 
 # ✅ 2. Add "create_table" Class Method to Create "pet_practice" Table If Doesn't Already Exist
 
-
     @classmethod
     def create_table(cls):
         sql = """
@@ -55,7 +54,6 @@ class Pet:
 
 # ✅ 3. Add "drop_table" Class Method to Drop "pet_practice" Table If Exists
 
-
     @classmethod
     def drop_table(cls):
         sql = """
@@ -68,6 +66,7 @@ class Pet:
 
 
 # ✅ 4. Add "save" Instance Method to Persist New "pet_practice" Instances to DB. Instance method NOT class method. (yeni 'evcil hayvan' örneklerini veritabanına devam ettir)
+
 
     def save(self):
         sql = """
@@ -100,6 +99,7 @@ class Pet:
 
 # ✅ 5. Add "create" Class Method to Initialize and Save New "pet_practice" Instances to DB
 
+
     @classmethod
     def create(cls, name, species, breed, temperament):
         pet = cls(name, species, breed, temperament)
@@ -117,6 +117,7 @@ class Pet:
 
 # ✅ 6. Add "new_from_db" Class Method to Retrieve Newest "pet_practice" Instance w/ Attributes From DB
 
+
     @classmethod
     def new_from_db(cls, row):
         cursor.execute(
@@ -127,7 +128,6 @@ class Pet:
 
 
 # ✅ 7. Add "get_all" Class Method to Retrieve All "pet_practice" Instances From DB
-
 
     @classmethod
     def get_all(cls):
@@ -146,7 +146,6 @@ class Pet:
 
 
 # ✅ 8. Add "find_by_name" Class Method to Retrieve "pet_practice" Instance by "name" Attribute From DB
-
 # If No "pet" Found, return "None"
 
 
@@ -164,7 +163,7 @@ class Pet:
         # print(pet)
         # test: denedik print(pet) returns (1, 'Buffy', 'dog', 'mixed', 'kissy')
         # assume pet name does exist
-        return cls(pet[0], pet[1], pet[2], pet[3], pet[4])
+        return cls(pet[1], pet[2], pet[3], pet[4], pet[0])
 
 # test icin
 # pet = Pet.find_by_name("Buffy")
@@ -204,6 +203,7 @@ class Pet:
 # ✅ 10. Add "find_or_create_by" Class Method to:
 #  Find and Retrieve "pet" Instance w/ All Attributes
 # If No "pet" Found, Create New "pet" Instance w/ All Attributes
+
 
     @classmethod
     def find_or_create_by(cls, name, species, breed, temperament):
@@ -249,6 +249,65 @@ class Pet:
 
 
 # ✅ 11. Add "update" Class Method to Find "pet" Instance by "id" and Update All Attributes
+ # Lecture instant method and clasmethod versions
+
+    @classmethod
+    def update_c(cls, id, name, species, breed, temperament):
+        sql = """
+        UPDATE pet_practice 
+        SET name = ?, 
+        species = ?, 
+        breed = ?, 
+        temperament = ? 
+        WHERE id = ?
+    """
+        cursor.execute(sql, (name, species, breed, temperament, id))
+        connection.commit()
 
 
-# time stamp 1:10
+# test
+Pet.update_c(2, "Corny Jr.", "dog", "goldendoodle", "happy")
+# worked!! with class method I can update a pet without needing to retrieve first whereas with the instance method below I had to retrieve it first.
+
+
+# WITH INSTANCE METHOD
+
+# def update(self, name, species, breed, temperament):
+# inside the parantheses are the argument thats going to be passed down below. when we do cursor execute self.name f.e we're passing in the qualities/attributes. we can change all or any of them we want.
+
+# self.name = name or self.name
+# self.species = species or self.species
+# self.breed = breed or self.breed
+# self.temperament = temperament or self.temperament
+
+# or self.attribute kismini sadece belli attributelari degistimek istersek diye ekledik. mesela name farkli parameter olarak verildiyse update edecek degilse aynen kalacak.
+
+#     sql = """
+#         UPDATE pet_practice
+#         SET name = ?,
+#         species = ?,
+#         breed = ?,
+#         temperament =?
+#         WHERE id = ?
+# """
+#     pet = cursor.execute(
+#         sql, (self.name, self.species, self.breed, self.temperament, self.id))
+#     connection.commit()
+
+
+# test icin yaptim buffy scruffy oldu. sonra da buffy tekrar geri aldik.
+# buffy = Pet.find_by_id(1)  first we RETRIEVED, we grabbed the buffy then update
+# # print(buffy.name)
+# buffy.update("Scruffy", "cat", "persian", "annoying")
+# buffy = Pet.find_by_name("Scruffy")
+# buffy.update("buffy", "dog", "mixed", "kissy")
+# buffy = Pet.find_by_name("Buffy")
+# buffy.update("buffy", "dog", "mixed", "silly")
+
+# test codun attribute larini OR lu yazdiktan sonra
+# buffy = Pet.find_by_name("buffy")
+# buffy.update(None, None, None, "sleepy") we could put " " instead of None we could still get the same result becasue " " is falsey
+# print(buffy.name)
+# result: <__main__.Pet object at 0x1030e7880> and kisy changed to sleepy
+
+# MOST OF THE TIME You will change only certain qualities/attributes from the DB not everything
